@@ -449,6 +449,58 @@ static const char *hm2_8cSS_pin_names[] = {
 
 };
 
+static const char *hm2_stmblETH_pin_names[] = {
+    "J4-01/DB25-01", /* J4 parallel expansion */
+    "J4-02/DB25-14",
+    "J4-03/DB25-02",
+    "J4-04/DB25-15",
+    "J4-05/DB25-03",
+    "J4-06/DB25-16",
+    "J4-07/DB25-04",
+    "J4-08/DB25-17",
+    "J4-09/DB25-05",
+    "J4-11/DB25-06",
+    "J4-13/DB25-07",
+    "J4-15/DB25-08",
+    "J4-17/DB25-09",
+    "J4-19/DB25-10",
+    "J4-21/DB25-11",
+    "J4-23/DB25-12",
+    "J4-25/DB25-13",
+    "J6-RX0",
+    "J6-TX0",
+    "J6-RX1",
+    "J6-TX1",
+    "J7-RX2",
+    "J7-TX2",
+    "J7-RX3",
+
+    "J7-TX3",
+    "J8-RX4",
+    "J8-TX4",
+    "J8-RX5",
+    "J8-TX5",
+    "J6-RX6",
+    "J6-TX6",
+    "J6-RX7",
+    "J6-TX7",
+    "J7-RX8",
+    "J7-TX8",
+    "J7-RX9",
+    "J7-TX9",
+    "J8-RX10",
+    "J8-TX10",
+    "J8-RX11",
+    "J8-TX11",
+    "J9-RX12",
+    "J9-TX12",
+    "J9-TXEN12",
+    "J9-RX13",
+    "J9-TX13",
+    "J9-TXEN13",
+    "EXT-PWR-EN"
+};
+
 #define UDP_PORT 27181
 #define SEND_TIMEOUT_US 10
 #define RECV_TIMEOUT_US 10
@@ -1432,6 +1484,29 @@ static int hm2_eth_probe(hm2_eth_t *board) {
         board->llio.ioport_connector_name[0] = "P1";
         board->llio.ioport_connector_name[1] = "P2";
 
+
+    } else if (strncmp(board_name, "stmblETH", 8) == 0) {
+        strncpy(llio_name, board_name, 8);
+        llio_name[1] = tolower(llio_name[1]);
+        board->llio.num_ioport_connectors = 2;
+        board->llio.pins_per_connector = 24;
+        board->llio.io_connector_pin_names = hm2_stmblETH_pin_names;
+
+        // DB25, 17 pins used, IO 0 to IO 16
+        board->llio.ioport_connector_name[0] = "J4";
+
+        // Serial 0..11 IO 17 to IO 40
+        board->llio.ioport_connector_name[1] = "J6,J8";
+
+        // Serial 12..13 IO 41 to IO 46
+        board->llio.ioport_connector_name[2] = "J9";
+
+        // EXT-PWR-EN IO 47
+        board->llio.ioport_connector_name[3] = "EXT-PWR-EN";
+
+        board->llio.fpga_part_number = "6slx9tqg144";
+        board->llio.num_leds = 4;
+    
     } else {
         LL_PRINT("Unrecognized ethernet board found: %.16s -- port names will be wrong\n", board_name);
         strncpy(llio_name, board_name, 4);
